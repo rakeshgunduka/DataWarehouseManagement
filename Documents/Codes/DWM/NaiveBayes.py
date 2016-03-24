@@ -4,7 +4,14 @@ import operator
 import csv
 import copy
 from sys import argv
+script,file_name = argv
+
+reader = csv.reader(open(file_name))
 d = []
+for row in reader:
+	d.append(row)
+'''
+#Dataset Example
 d = [['Outlook','Temperature','Humidity','Wind','PlayTennis'],\
 	 ['Sunny'	,'Hot'	,'High'		,'Weak'		,'No'],\
 	 ['Sunny'	,'Hot'	,'High'		,'Strong'	,'No'],\
@@ -20,6 +27,7 @@ d = [['Outlook','Temperature','Humidity','Wind','PlayTennis'],\
 	 ['Overcast','Mild'	,'High'		,'Strong'	,'Yes'],\
 	 ['Overcast','Hot'	,'Normal'	,'Weak'		,'Yes'],\
 	 ['Rain'	,'Mild'	,'High'		,'Strong'	,'No']]
+'''
 #GLOBALS
 tl = []
 t_titles = d[0]
@@ -41,6 +49,8 @@ def init_classes(dset):
 	dataset = copy.copy(dset)
 	title = dataset[0]
 	del dataset[0]
+	#print title
+	#print dataset
 	for p in title:
 		index = title.index(p)
 		ii = title.index(ctitle)
@@ -80,6 +90,9 @@ def init_classes(dset):
 		cls[p] = cld
 		if n < m:
 			n = m
+	#print cls
+	#if trap == 1:
+	#	exit(0)
 	return cls
 
 def prob_classifier():
@@ -100,12 +113,17 @@ def prob_sample():
 	global classes,sample
 	pSi = {}
 	for k,cls in enumerate(classes[ctitle]):
+		#print cls
+		#print k
 		if 0 in classes[ctitle][cls]:
 			j = 0
 			for i in classes[ctitle][cls]:
 				j += i
+		#print j
 		tmp2 = {}
 		for title in sample:
+			#print title
+			#print cls,title,classes[title][sample[title]]
 			tmp2[title] = classes[title][sample[title]][k]/j
 		pSi[cls] = tmp2
 	return pSi
@@ -114,9 +132,13 @@ def prob_X():
 	global pSi
 	pXi = {}
 	for val in pSi:
+		#print val
 		j = 1
 		for p in pSi[val]:
+			#print val,pSi[val][p]
 			j = j*pSi[val][p]
+			#j *= pSi[val][p]
+		#print j
 		pXi[val] = j
 	return pXi	
 
@@ -129,10 +151,17 @@ def print_prediction():
 	
 
 if __name__ == "__main__":
+	#tree = inittree(d)
 	dataset = copy.copy(d)
 	title = dataset[0]
 	del dataset[0]
-	sample = {'Outlook':'Sunny','Temperature':'Hot','Humidity':'High','Wind':'Strong'} #Sample Dataset as Input
+	#print dataset
+	#sample = {'Outlook':'Sunny','Temperature':'Hot','Humidity':'High','Wind':'Strong'}
+	for title in t_titles:
+		if title != ctitle:
+			sample[title] = raw_input(title+":")
+	sample = dict((k,v) for k,v in sample.iteritems() if v)
+	#print sample
 	pCi = prob_classifier()
 	print pCi,"\n"
 	pSi = prob_sample()
